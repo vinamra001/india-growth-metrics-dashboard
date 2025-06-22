@@ -9,6 +9,18 @@ import {
   Alert
 } from '@mui/material';
 import axios from 'axios';
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip as RechartsTooltip,
+  PieChart,
+  Pie,
+  Cell
+} from 'recharts';
 
 interface City {
   _id: string;
@@ -154,7 +166,14 @@ const Insights: React.FC = () => {
           <Card>
             <CardHeader title="GDP Distribution" />
             <CardContent>
-              {/* Placeholder for GDP Distribution chart */}
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={cities.slice(0, 10)}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Bar dataKey="metrics.gdpPerCapita" fill="#8884d8" />
+                </BarChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
         </Box>
@@ -163,7 +182,15 @@ const Insights: React.FC = () => {
           <Card>
             <CardHeader title="HDI vs Literacy Rate" />
             <CardContent>
-              {/* Placeholder for HDI vs Literacy Rate chart */}
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={cities.slice(0, 10)}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Bar dataKey="metrics.hdi" fill="#82ca9d" />
+                  <Bar dataKey="metrics.literacyRate" fill="#ffc658" />
+                </BarChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
         </Box>
@@ -175,7 +202,21 @@ const Insights: React.FC = () => {
           <Card>
             <CardHeader title="Top GDP Cities" />
             <CardContent>
-              {/* Placeholder for Top GDP Cities content */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                {cities
+                  .sort((a, b) => b.metrics.gdpPerCapita - a.metrics.gdpPerCapita)
+                  .slice(0, 5)
+                  .map((city, index) => (
+                    <Box key={city.name} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Typography variant="body2">
+                        {index + 1}. {city.name}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        ₹{(city.metrics.gdpPerCapita || 0).toLocaleString()}
+                      </Typography>
+                    </Box>
+                  ))}
+              </Box>
             </CardContent>
           </Card>
         </Box>
@@ -184,7 +225,21 @@ const Insights: React.FC = () => {
           <Card>
             <CardHeader title="Top HDI Cities" />
             <CardContent>
-              {/* Placeholder for Top HDI Cities content */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                {cities
+                  .sort((a, b) => b.metrics.hdi - a.metrics.hdi)
+                  .slice(0, 5)
+                  .map((city, index) => (
+                    <Box key={city.name} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Typography variant="body2">
+                        {index + 1}. {city.name}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        {(city.metrics.hdi || 0).toFixed(3)}
+                      </Typography>
+                    </Box>
+                  ))}
+              </Box>
             </CardContent>
           </Card>
         </Box>
@@ -193,7 +248,21 @@ const Insights: React.FC = () => {
           <Card>
             <CardHeader title="Top Literacy Cities" />
             <CardContent>
-              {/* Placeholder for Top Literacy Cities content */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                {cities
+                  .sort((a, b) => b.metrics.literacyRate - a.metrics.literacyRate)
+                  .slice(0, 5)
+                  .map((city, index) => (
+                    <Box key={city.name} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Typography variant="body2">
+                        {index + 1}. {city.name}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        {(city.metrics.literacyRate || 0).toFixed(1)}%
+                      </Typography>
+                    </Box>
+                  ))}
+              </Box>
             </CardContent>
           </Card>
         </Box>
@@ -205,7 +274,26 @@ const Insights: React.FC = () => {
           <Card>
             <CardHeader title="Areas for Improvement" />
             <CardContent>
-              {/* Placeholder for Areas for Improvement content */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <Typography variant="h6" color="error">
+                  Cities with Lowest HDI
+                </Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                  {cities
+                    .sort((a, b) => a.metrics.hdi - b.metrics.hdi)
+                    .slice(0, 3)
+                    .map((city, index) => (
+                      <Box key={city.name} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Typography variant="body2">
+                          {index + 1}. {city.name}
+                        </Typography>
+                        <Typography variant="body2" color="error">
+                          HDI: {(city.metrics.hdi || 0).toFixed(3)}
+                        </Typography>
+                      </Box>
+                    ))}
+                </Box>
+              </Box>
             </CardContent>
           </Card>
         </Box>

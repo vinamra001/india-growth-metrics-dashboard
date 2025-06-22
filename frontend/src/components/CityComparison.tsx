@@ -74,6 +74,7 @@ const CityComparison: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCities, setSelectedCities] = useState<string[]>([]);
+  const [addCityValue, setAddCityValue] = useState<string>("");
 
   useEffect(() => {
     fetchCities();
@@ -151,8 +152,19 @@ const CityComparison: React.FC = () => {
               <FormControl fullWidth>
                 <InputLabel>Add City</InputLabel>
                 <Select
-                  value=""
+                  value={addCityValue}
                   label="Add City"
+                  onChange={e => {
+                    const cityName = e.target.value as string;
+                    if (
+                      cityName &&
+                      !selectedCities.includes(cityName) &&
+                      selectedCities.length < 4
+                    ) {
+                      setSelectedCities([...selectedCities, cityName]);
+                    }
+                    setAddCityValue("");
+                  }}
                 >
                   {cities
                     .filter(city => !selectedCities.includes(city.name))
