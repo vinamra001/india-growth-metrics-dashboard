@@ -1,0 +1,11 @@
+city,state,gdp_per_capita,hdi,literacy_rate,healthcare_expenditure,infrastructure_quality,internet_penetration
+Mumbai,Maharashtra,85000,0.745,89.2,8500,78,78
+Delhi,Delhi,92000,0.732,86.3,7800,75,82
+Bangalore,Karnataka,95000,0.768,87.5,9200,82,85
+Chennai,Tamil Nadu,72000,0.721,80.1,8100,76,76
+Kolkata,West Bengal,68000,0.698,77.1,7200,72,72
+Pune,Maharashtra,82000,0.754,84.7,8900,80,80
+Hyderabad,Telangana,88000,0.761,83.2,8800,79,79
+Ahmedabad,Gujarat,75000,0.718,79.8,7600,74,74
+Jaipur,Rajasthan,65000,0.689,76.4,6800,70,68
+Surat,Gujarat,78000,0.725,81.3,7400,73,72

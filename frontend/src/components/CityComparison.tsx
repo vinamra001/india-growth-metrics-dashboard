@@ -1,0 +1,439 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
+  Box,
+  Alert,
+  Chip,
+  LinearProgress,
+  Divider,
+  Tabs,
+  Tab,
+  TextField,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  useMediaQuery,
+  useTheme,
+  AlertTitle,
+  Snackbar,
+  Backdrop,
+  Skeleton,
+  AppBar,
+  Toolbar,
+  Container,
+  Menu,
+  Badge,
+  Slide,
+  Fade,
+  Zoom,
+  useScrollTrigger,
+  Tooltip
+} from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import Avatar from '@mui/material/Avatar';
+import CircularProgress from '@mui/material/CircularProgress';
+import SearchIcon from '@mui/icons-material/Search';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  RadarChart,
+  Radar,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+} from 'recharts';
+import {
+  Compare,
+  TrendingUp,
+  TrendingDown,
+  AttachMoney,
+  People,
+  HealthAndSafety,
+  School,
+  Speed,
+  CheckCircle,
+  Cancel
+} from '@mui/icons-material';
+import axios from 'axios';
+
+interface City {
+  _id: string;
+  name: string;
+  state: string;
+  metrics: {
+    gdp: number;
+    gdpPerCapita: number;
+    hdi: number;
+    infantMortalityRate: number;
+    literacyRate: number;
+    educationIndex: number;
+    genderInequalityIndex: number;
+    populationGrowthRate: number;
+    urbanPopulation: number;
+    healthcareExpenditure: number;
+    physiciansPer1000: number;
+    hospitalBedsPer1000: number;
+    cleanWaterAccess: number;
+    vaccinationCoverage: number;
+    co2EmissionsPerCapita: number;
+    renewableEnergy: number;
+    forestArea: number;
+    airQualityIndex: number;
+    environmentalPerformanceIndex: number;
+    corruptionPerceptionsIndex: number;
+    internetPenetration: number;
+    mobilePhoneSubscriptions: number;
+    infrastructureQualityIndex: number;
+    politicalStabilityIndex: number;
+    giniCoefficient: number;
+    povertyRate: number;
+    socialProtectionCoverage: number;
+  };
+}
+
+interface Metric {
+  key: string;
+  label: string;
+  unit: string;
+}
+
+const CityComparison: React.FC = () => {
+  const [cities, setCities] = useState<City[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedMetrics, setSelectedMetrics] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCities, setSelectedCities] = useState<string[]>([]);
+  const [tabValue, setTabValue] = useState(0);
+  const [openInsights, setOpenInsights] = useState(false);
+  const [selectedInsight, setSelectedInsight] = useState<City | null>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [notifications, setNotifications] = useState<{ message: string; severity: 'success' | 'error' | 'info' | 'warning' }[]>([]);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  useEffect(() => {
+    fetchCities();
+  }, []);
+
+  const fetchCities = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get('http://localhost:5000/api/cities');
+      const citiesData = response.data.data || response.data || [];
+      setCities(Array.isArray(citiesData) ? citiesData : []);
+      if (citiesData.length >= 2) {
+        setSelectedCities([citiesData[0].name, citiesData[1].name]);
+      }
+      setError(null);
+    } catch (err) {
+      setError('Failed to fetch cities data');
+      console.error('Error fetching data:', err);
+      setCities([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getMetricIcon = (metric: string) => {
+    switch (metric) {
+      case 'gdp':
+      case 'gdpPerCapita':
+        return <AttachMoney color="primary" />;
+      case 'hdi':
+        return <People color="success" />;
+      case 'healthcareExpenditure':
+        return <HealthAndSafety color="info" />;
+      case 'literacyRate':
+        return <School color="secondary" />;
+      case 'renewableEnergy':
+        return <Speed color="success" />;
+      case 'internetPenetration':
+        return <Speed color="primary" />;
+      default:
+        return <TrendingUp color="primary" />;
+    }
+  };
+
+  const formatMetricValue = (value: number, metric: string) => {
+    if (metric.includes('Rate') || metric.includes('Index')) {
+      return `${(value * 100).toFixed(1)}%`;
+    }
+    if (metric.includes('gdp') || metric.includes('expenditure')) {
+      return `₹${(value / 1000).toFixed(1)}K`;
+    }
+    return value.toFixed(1);
+  };
+
+  const getComparisonColor = (value1: any, value2: any, key: string): 'success' | 'error' | 'default' => {
+    if (value1 > value2) return 'success';
+    if (value1 < value2) return 'error';
+    return 'default';
+  };
+
+  const getComparisonIcon = (city1Value: number, city2Value: number) => {
+    if (city1Value > city2Value) return <TrendingUp color="success" />;
+    if (city1Value < city2Value) return <TrendingDown color="error" />;
+    return <CheckCircle color="inherit" />;
+  };
+
+  const handleMetricSelect = (metric: string) => {
+    if (selectedMetrics.includes(metric)) {
+      setSelectedMetrics(selectedMetrics.filter(m => m !== metric));
+    } else {
+      setSelectedMetrics([...selectedMetrics, metric]);
+    }
+  };
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
+
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleCitySelect = (cityName: string) => {
+    if (!selectedCities.includes(cityName) && selectedCities.length < 4) {
+      setSelectedCities([...selectedCities, cityName]);
+    }
+  };
+
+  const handleRemoveCity = (cityName: string) => {
+    setSelectedCities(selectedCities.filter(name => name !== cityName));
+  };
+
+  const filteredCities = cities.filter(city =>
+    city.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    city.state.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const selectedCityData = cities.filter(city => selectedCities.includes(city.name));
+
+  const comparisonData = selectedCityData.map(city => ({
+    name: city.name,
+    gdp: city.metrics.gdp,
+    hdi: city.metrics.hdi,
+    literacyRate: city.metrics.literacyRate,
+    healthcareExpenditure: city.metrics.healthcareExpenditure,
+    internetPenetration: city.metrics.internetPenetration,
+    airQualityIndex: city.metrics.airQualityIndex,
+  }));
+
+  if (loading) {
+    return (
+      <Box sx={{ width: '100%', mt: 2 }}>
+        <LinearProgress />
+        <Typography variant="h6" sx={{ mt: 2, textAlign: 'center' }}>
+          Loading cities data...
+        </Typography>
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert severity="error" sx={{ mt: 2 }}>
+        {error}
+      </Alert>
+    );
+  }
+
+  return (
+    <Box sx={{ flexGrow: 1 }}>
+      <Typography variant="h4" gutterBottom sx={{ mb: 3, fontWeight: 600 }}>
+        🏙️ City Comparison
+      </Typography>
+
+      {/* City Selection */}
+      <Card sx={{ mb: 3 }}>
+        <CardHeader title="Select Cities to Compare" />
+        <CardContent>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
+            <Box>
+              <TextField
+                fullWidth
+                label="Search Cities"
+                value={searchTerm}
+                onChange={handleSearch}
+                variant="outlined"
+              />
+            </Box>
+            <Box>
+              <FormControl fullWidth>
+                <InputLabel>Add City</InputLabel>
+                <Select
+                  value=""
+                  onChange={(e) => handleCitySelect(e.target.value)}
+                  label="Add City"
+                >
+                  {cities
+                    .filter(city => !selectedCities.includes(city.name))
+                    .map(city => (
+                      <MenuItem key={city._id} value={city.name}>
+                        {city.name}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+            </Box>
+          </Box>
+
+          {/* Selected Cities */}
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="subtitle1" gutterBottom>
+              Selected Cities ({selectedCities.length}/4):
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+              {selectedCities.map(cityName => (
+                <Chip
+                  key={cityName}
+                  label={cityName}
+                  onDelete={() => handleRemoveCity(cityName)}
+                  color="primary"
+                  variant="outlined"
+                />
+              ))}
+            </Box>
+          </Box>
+        </CardContent>
+      </Card>
+
+      {/* Comparison Charts */}
+      {selectedCityData.length >= 2 && (
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
+          {/* GDP Comparison */}
+          <Box>
+            <Card>
+              <CardHeader title="GDP Comparison" />
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={comparisonData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Bar dataKey="gdp" fill="#8884d8" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </Box>
+
+          {/* HDI Comparison */}
+          <Box>
+            <Card>
+              <CardHeader title="HDI Comparison" />
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={comparisonData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Bar dataKey="hdi" fill="#82ca9d" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </Box>
+
+          {/* Detailed Comparison Table */}
+          <Box sx={{ gridColumn: '1 / -1' }}>
+            <Card>
+              <CardHeader title="Detailed Metrics Comparison" />
+              <CardContent>
+                <TableContainer component={Paper}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Metric</TableCell>
+                        {selectedCityData.map(city => (
+                          <TableCell key={city._id} align="center">
+                            {city.name}
+                          </TableCell>
+                        ))}
+                        <TableCell>Best</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {[
+                        { key: 'gdp', label: 'GDP (₹K)', format: (v: number) => `₹${(v / 1000).toFixed(1)}K` },
+                        { key: 'hdi', label: 'HDI', format: (v: number) => v.toFixed(3) },
+                        { key: 'literacyRate', label: 'Literacy Rate (%)', format: (v: number) => `${(v * 100).toFixed(1)}%` },
+                        { key: 'healthcareExpenditure', label: 'Healthcare Expenditure (₹K)', format: (v: number) => `₹${(v / 1000).toFixed(1)}K` },
+                        { key: 'internetPenetration', label: 'Internet Penetration (%)', format: (v: number) => `${(v * 100).toFixed(1)}%` },
+                        { key: 'airQualityIndex', label: 'Air Quality Index', format: (v: number) => v.toFixed(1) },
+                      ].map(metric => {
+                        const values = selectedCityData.map(city => city.metrics[metric.key as keyof City['metrics']] || 0);
+                        const bestValue = Math.max(...values);
+                        const bestCity = selectedCityData.find(city => 
+                          (city.metrics[metric.key as keyof City['metrics']] || 0) === bestValue
+                        );
+
+                        return (
+                          <TableRow key={metric.key}>
+                            <TableCell component="th" scope="row">
+                              {metric.label}
+                            </TableCell>
+                            {selectedCityData.map(city => {
+                              const value = city.metrics[metric.key as keyof City['metrics']] || 0;
+                              return (
+                                <TableCell key={city._id} align="center">
+                                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    {metric.format(value)}
+                                    {value === bestValue && <CheckCircle color="success" sx={{ ml: 1 }} />}
+                                  </Box>
+                                </TableCell>
+                              );
+                            })}
+                            <TableCell align="center">
+                              <Chip 
+                                label={bestCity?.name || ''} 
+                                color="success" 
+                                size="small" 
+                              />
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </CardContent>
+            </Card>
+          </Box>
+        </Box>
+      )}
+
+      {selectedCityData.length < 2 && (
+        <Alert severity="info" sx={{ mt: 2 }}>
+          Please select at least 2 cities to compare their metrics.
+        </Alert>
+      )}
+    </Box>
+  );
+};
+
+export default CityComparison; 
