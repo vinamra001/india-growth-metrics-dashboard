@@ -96,7 +96,6 @@ const Dashboard: React.FC = () => {
   const [cities, setCities] = useState<City[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedYear, setSelectedYear] = useState(2023);
   const [granularity, setGranularity] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
   const [mapMetric, setMapMetric] = useState<string>('gdpPerCapita');
   const theme = useTheme();
@@ -135,64 +134,6 @@ const Dashboard: React.FC = () => {
   const handleRefreshData = () => {
     console.log('Refreshing live data from APIs...');
     fetchCities();
-  };
-
-  const handleYearChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedYear(parseInt(event.target.value));
-  };
-
-  const getMetricIcon = (metric: string) => {
-    const iconMap: { [key: string]: React.ReactNode } = {
-      gdp: <AttachMoney />,
-      gdpPerCapita: <AttachMoney />,
-      hdi: <TrendingUp />,
-      infantMortalityRate: <HealthAndSafety />,
-      literacyRate: <School />,
-      educationIndex: <School />,
-      populationGrowthRate: <People />,
-      urbanPopulation: <People />,
-      healthcareExpenditure: <HealthAndSafety />,
-      physiciansPer1000: <HealthAndSafety />,
-      hospitalBedsPer1000: <HealthAndSafety />,
-      cleanWaterAccess: <HealthAndSafety />,
-      vaccinationCoverage: <HealthAndSafety />,
-      co2EmissionsPerCapita: <Air />,
-      renewableEnergy: <Air />,
-      forestArea: <Air />,
-      airQualityIndex: <Air />,
-      environmentalPerformanceIndex: <Air />,
-      corruptionPerceptionsIndex: <Speed />,
-      internetPenetration: <Speed />,
-      mobilePhoneSubscriptions: <Speed />,
-      infrastructureQualityIndex: <Speed />,
-      politicalStabilityIndex: <Speed />,
-      giniCoefficient: <TrendingDown />,
-      povertyRate: <TrendingDown />,
-      socialProtectionCoverage: <TrendingUp />
-    };
-    return iconMap[metric] || <TrendingUp />;
-  };
-
-  const getMetricValue = (city: City, metric: Metric) => {
-    return city.metrics[metric.key as keyof City['metrics']] || 0;
-  };
-
-  const getMetricColor = (value: number, metric: string) => {
-    // Simple color logic based on value ranges
-    if (metric.includes('Rate') || metric.includes('Index')) {
-      return value > 0.7 ? '#4caf50' : value > 0.4 ? '#ff9800' : '#f44336';
-    }
-    return value > 100000 ? '#4caf50' : value > 50000 ? '#ff9800' : '#f44336';
-  };
-
-  const formatMetricValue = (value: number, metric: string) => {
-    if (metric.includes('Rate') || metric.includes('Index')) {
-      return `${(value * 100).toFixed(1)}%`;
-    }
-    if (metric.includes('gdp') || metric.includes('expenditure')) {
-      return `₹${(value / 1000).toFixed(1)}K`;
-    }
-    return value.toFixed(1);
   };
 
   if (loading) {

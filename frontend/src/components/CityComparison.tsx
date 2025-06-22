@@ -13,10 +13,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Table,
   TableBody,
   TableCell,
@@ -82,12 +78,6 @@ interface City {
   };
 }
 
-interface Metric {
-  key: string;
-  label: string;
-  unit: string;
-}
-
 const CityComparison: React.FC = () => {
   const [cities, setCities] = useState<City[]>([]);
   const [loading, setLoading] = useState(true);
@@ -96,12 +86,7 @@ const CityComparison: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCities, setSelectedCities] = useState<string[]>([]);
   const [tabValue, setTabValue] = useState(0);
-  const [openInsights, setOpenInsights] = useState(false);
-  const [selectedInsight, setSelectedInsight] = useState<City | null>(null);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [notifications, setNotifications] = useState<{ message: string; severity: 'success' | 'error' | 'info' | 'warning' }[]>([]);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 

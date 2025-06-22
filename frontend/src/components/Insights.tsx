@@ -91,8 +91,6 @@ const Insights: React.FC = () => {
     };
   };
 
-  const insightsData = calculateInsights();
-
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
