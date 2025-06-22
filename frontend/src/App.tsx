@@ -113,7 +113,9 @@ function TabPanel(props: TabPanelProps) {
 function App() {
   const [value, setValue] = useState<number>(0);
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const showTabs = isMobile || isSmallScreen;
 
   useEffect(() => {
     // Initialize data and perform any necessary setup
@@ -191,7 +193,7 @@ function App() {
           color: 'white'
         }}>
           <Toolbar>
-            {isMobile && (
+            {showTabs && (
               <IconButton
                 color="inherit"
                 aria-label="open drawer"
@@ -210,7 +212,7 @@ function App() {
         </AppBar>
 
         <Box sx={{ display: 'flex', flex: 1 }}>
-          {!isMobile && (
+          {!showTabs && (
             <Drawer
               variant="permanent"
               sx={{
@@ -227,7 +229,7 @@ function App() {
             </Drawer>
           )}
 
-          {isMobile && (
+          {showTabs && (
             <Drawer
               variant="temporary"
               open={mobileOpen}
@@ -256,14 +258,23 @@ function App() {
               flexDirection: 'column'
             }}
           >
-            {isMobile && (
+            {showTabs && (
               <Paper sx={{ mb: 2, overflow: 'hidden' }}>
                 <Tabs
                   value={value}
                   onChange={handleChange}
                   variant="scrollable"
                   scrollButtons="auto"
-                  sx={{ borderBottom: 1, borderColor: 'divider' }}
+                  allowScrollButtonsMobile
+                  sx={{ 
+                    borderBottom: 1, 
+                    borderColor: 'divider',
+                    '& .MuiTab-root': {
+                      minHeight: 48,
+                      fontSize: '0.75rem',
+                      padding: '6px 8px'
+                    }
+                  }}
                 >
                   {menuItems.map((item, index) => (
                     <Tab
@@ -271,7 +282,11 @@ function App() {
                       label={item.label}
                       icon={item.icon}
                       iconPosition="start"
-                      sx={{ minHeight: 64 }}
+                      sx={{ 
+                        minHeight: 48,
+                        fontSize: '0.75rem',
+                        padding: '6px 8px'
+                      }}
                     />
                   ))}
                 </Tabs>
