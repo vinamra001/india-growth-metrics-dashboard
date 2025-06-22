@@ -9,8 +9,6 @@ import {
   Chip,
   LinearProgress,
   Divider,
-  IconButton,
-  Tooltip,
   FormControl,
   InputLabel,
   Select,
@@ -24,9 +22,7 @@ import {
   School,
   Speed,
   TrendingUp,
-  Air,
-  Refresh as RefreshIcon,
-  CloudSync as LiveDataIcon
+  Air
 } from '@mui/icons-material';
 import {
   LineChart,
@@ -345,7 +341,6 @@ const Dashboard: React.FC = () => {
       {/* Live Data Header */}
       <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <LiveDataIcon color="primary" />
           <Typography variant="h5" component="h2">
             Live Data Dashboard
           </Typography>
@@ -353,7 +348,6 @@ const Dashboard: React.FC = () => {
             label="Live APIs" 
             color="success" 
             size="small" 
-            icon={<LiveDataIcon />}
           />
         </Box>
         <Tooltip title="Refresh live data from APIs">

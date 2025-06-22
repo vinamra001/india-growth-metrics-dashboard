@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -8,11 +8,7 @@ import {
   Alert,
   Chip,
   LinearProgress,
-  Divider,
-  Tabs,
-  Tab,
   TextField,
-  Button,
   FormControl,
   InputLabel,
   Select,
@@ -29,52 +25,8 @@ import {
   TableRow,
   Paper,
   useMediaQuery,
-  useTheme,
-  AlertTitle,
-  Snackbar,
-  Backdrop,
-  Skeleton,
-  AppBar,
-  Toolbar,
-  Container,
-  Menu,
-  Badge,
-  Slide,
-  Fade,
-  Zoom,
-  useScrollTrigger,
-  Tooltip
+  useTheme
 } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
-import Avatar from '@mui/material/Avatar';
-import CircularProgress from '@mui/material/CircularProgress';
-import SearchIcon from '@mui/icons-material/Search';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Legend,
-  ResponsiveContainer,
-  RadarChart,
-  Radar,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-} from 'recharts';
-import {
-  Compare,
-  TrendingUp,
-  TrendingDown,
-  AttachMoney,
-  People,
-  HealthAndSafety,
-  School,
-  Speed,
-  CheckCircle,
-  Cancel
-} from '@mui/icons-material';
 import axios from 'axios';
 
 interface City {

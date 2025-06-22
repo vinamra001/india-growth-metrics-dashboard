@@ -20,13 +20,6 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  TableContainer,
-  Paper,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
   Accordion,
   AccordionSummary,
   AccordionDetails
@@ -34,7 +27,6 @@ import {
 import {
   Analytics,
   ShowChart,
-  TrendingUp,
   Psychology,
   ExpandMore,
   CloudUpload

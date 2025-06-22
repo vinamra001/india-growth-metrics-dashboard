@@ -20,21 +20,6 @@ import {
   MenuItem,
   TextField
 } from '@mui/material';
-import {
-  TrendingUp as TrendingUpIcon,
-  TrendingDown as TrendingDownIcon,
-  Sort as SortIcon,
-  SortByAlpha as SortByAlphaIcon
-} from '@mui/icons-material';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip as RechartsTooltip,
-  ResponsiveContainer
-} from 'recharts';
 import axios from 'axios';
 import config from '../config';
 
