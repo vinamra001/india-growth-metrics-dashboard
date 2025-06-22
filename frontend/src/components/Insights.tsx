@@ -71,26 +71,6 @@ const Insights: React.FC = () => {
     }
   };
 
-  const calculateInsights = () => {
-    if (!cities.length) return null;
-
-    const avgGDP = cities.reduce((sum, city) => sum + (city.metrics.gdpPerCapita || 0), 0) / cities.length;
-    const avgHDI = cities.reduce((sum, city) => sum + (city.metrics.hdi || 0), 0) / cities.length;
-    const avgLiteracy = cities.reduce((sum, city) => sum + (city.metrics.literacyRate || 0), 0) / cities.length;
-    const avgHealthcare = cities.reduce((sum, city) => sum + (city.metrics.healthcareExpenditure || 0), 0) / cities.length;
-
-    const topGDP = cities.sort((a, b) => (b.metrics.gdpPerCapita || 0) - (a.metrics.gdpPerCapita || 0)).slice(0, 3);
-    const topHDI = cities.sort((a, b) => (b.metrics.hdi || 0) - (a.metrics.hdi || 0)).slice(0, 3);
-    const topLiteracy = cities.sort((a, b) => (b.metrics.literacyRate || 0) - (a.metrics.literacyRate || 0)).slice(0, 3);
-    const worstAirQuality = cities.sort((a, b) => (a.metrics.airQualityIndex || 0) - (b.metrics.airQualityIndex || 0)).slice(0, 3);
-
-    return {
-      averages: { avgGDP, avgHDI, avgLiteracy, avgHealthcare },
-      topPerformers: { topGDP, topHDI, topLiteracy },
-      challenges: { worstAirQuality }
-    };
-  };
-
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">

@@ -15,16 +15,6 @@ import {
   MenuItem
 } from '@mui/material';
 import {
-  TrendingDown,
-  AttachMoney,
-  People,
-  HealthAndSafety,
-  School,
-  Speed,
-  TrendingUp,
-  Air
-} from '@mui/icons-material';
-import {
   ResponsiveContainer,
   BarChart,
   Bar,
@@ -83,13 +73,6 @@ interface City {
   };
 }
 
-interface Metric {
-  category: string;
-  key: string;
-  label: string;
-  unit: string;
-}
-
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
 const Dashboard: React.FC = () => {
@@ -123,7 +106,7 @@ const Dashboard: React.FC = () => {
     fetchCities();
     
     const interval = setInterval(() => {
-      console.log('Auto-refreshing live data...');
+      // console.log('Auto-refreshing live data...');
       fetchCities();
     }, 5 * 60 * 1000); // 5 minutes
     
@@ -132,7 +115,7 @@ const Dashboard: React.FC = () => {
 
   // Add refresh button handler
   const handleRefreshData = () => {
-    console.log('Refreshing live data from APIs...');
+    // console.log('Refreshing live data from APIs...');
     fetchCities();
   };
 
