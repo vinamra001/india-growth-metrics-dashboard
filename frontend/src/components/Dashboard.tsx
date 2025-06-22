@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Card,
   CardContent,
@@ -81,7 +81,7 @@ const Dashboard: React.FC = () => {
   const [granularity, setGranularity] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
   const [mapMetric, setMapMetric] = useState<string>('gdpPerCapita');
 
-  const fetchCities = async () => {
+  const fetchCities = useCallback(async () => {
     try {
       setLoading(true);
       const apiUrl = config.API_URL;
@@ -96,17 +96,15 @@ const Dashboard: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [granularity]);
 
-  // Auto-refresh live data every 5 minutes
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchCities();
     const interval = setInterval(() => {
       fetchCities();
     }, 5 * 60 * 1000);
     return () => clearInterval(interval);
-  }, [granularity]);
+  }, [granularity, fetchCities]);
 
   // Add refresh button handler
   const handleRefreshData = () => {
