@@ -22,6 +22,19 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import config from '../config';
+import {
+  TrendingUp as TrendingUpIcon,
+  TrendingDown as TrendingDownIcon
+} from '@mui/icons-material';
+import {
+  ResponsiveContainer,
+  BarChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip as RechartsTooltip,
+  Bar
+} from 'recharts';
 
 interface City {
   _id: string;

@@ -25,13 +25,6 @@ import {
   Air
 } from '@mui/icons-material';
 import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip as RechartsTooltip,
-  Legend,
   ResponsiveContainer,
   BarChart,
   Bar,
@@ -44,6 +37,15 @@ import { useMediaQuery, useTheme } from '@mui/material';
 import LiveDataStatus from './LiveDataStatus';
 import CityMap from './CityMap';
 import config from '../config';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import { Refresh as RefreshIcon } from '@mui/icons-material';
+import {
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip as RechartsTooltip
+} from 'recharts';
 
 interface City {
   _id: string;
@@ -92,119 +94,13 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
 const Dashboard: React.FC = () => {
   const [cities, setCities] = useState<City[]>([]);
-  const [alerts, setAlerts] = useState<{ message: string; severity: 'error' | 'success' | 'info' | 'warning' }[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedYear, setSelectedYear] = useState(2023);
-  const [selectedMetrics, setSelectedMetrics] = useState<string[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCity, setSelectedCity] = useState<string>('');
-  const [openCompare, setOpenCompare] = useState(false);
-  const [selectedCities, setSelectedCities] = useState<string[]>([]);
-  const [tabValue, setTabValue] = useState(0);
-  const [openInsights, setOpenInsights] = useState(false);
-  const [selectedInsight, setSelectedInsight] = useState<City | null>(null);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [notifications, setNotifications] = useState<any[]>([]);
   const [granularity, setGranularity] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
   const [mapMetric, setMapMetric] = useState<string>('gdpPerCapita');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMobileMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setMobileMoreAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    handleMobileMenuClose();
-  };
-
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null);
-  };
-
-  const handleDarkModeToggle = () => {
-    setIsDarkMode(!isDarkMode);
-    localStorage.setItem('darkMode', JSON.stringify(!isDarkMode));
-  };
-
-  const handleNotification = (message: string, severity: 'success' | 'error' | 'info' | 'warning') => {
-    setNotifications(prev => [...prev, { message, severity }]);
-    // Simple notification display
-    console.log(`${severity.toUpperCase()}: ${message}`);
-  };
-
-  const handleViewInsights = (city: City) => {
-    setSelectedInsight(city);
-    setOpenInsights(true);
-  };
-
-  const handleCloseInsights = () => {
-    setOpenInsights(false);
-    setSelectedInsight(null);
-  };
-
-  const handleTrendAnalysis = async (metric: string) => {
-    try {
-      const response = await axios.post('http://localhost:5000/api/ai/trend-analysis', {
-        metric,
-        cities,
-        years: 5
-      });
-      
-      handleNotification('Trend analysis completed', 'success');
-      // Update cities with new trend data
-      const updatedCities = cities.map(city => ({
-        ...city,
-        insights: {
-          trends: response.data.trends
-        }
-      }));
-      setCities(updatedCities);
-    } catch (error) {
-      console.error('Trend analysis error:', error);
-      handleNotification('Failed to perform trend analysis', 'error');
-    }
-  };
-
-  const getMetricTrendData = (metric: string) => {
-    return cities.map(city => ({
-      name: city.name,
-      value: city.metrics[metric as keyof City['metrics']] || 0
-    }));
-  };
-
-  const handleDownload = async () => {
-    try {
-      const response = await axios.post('http://localhost:5000/api/export', {
-        cities,
-        metrics: selectedMetrics,
-        year: selectedYear
-      });
-      
-      const blob = new Blob([response.data], { type: 'text/csv' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `india-growth-metrics-${selectedYear}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-      
-      handleNotification('Data exported successfully', 'success');
-    } catch (error) {
-      console.error('Export error:', error);
-      handleNotification('Failed to export data', 'error');
-    }
-  };
 
   const fetchCities = async () => {
     try {
@@ -223,20 +119,6 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  // Fetch live dashboard summary
-  const fetchDashboardSummary = async () => {
-    try {
-      const response = await axios.get('http://localhost:5000/api/cities/dashboard/summary');
-      if (response.data.success) {
-        console.log('Live dashboard summary:', response.data.data);
-        return response.data.data;
-      }
-    } catch (error) {
-      console.error('Error fetching live dashboard summary:', error);
-    }
-    return null;
-  };
-
   // Auto-refresh live data every 5 minutes
   useEffect(() => {
     fetchCities();
@@ -251,16 +133,12 @@ const Dashboard: React.FC = () => {
 
   // Add refresh button handler
   const handleRefreshData = () => {
-    handleNotification('Refreshing live data from APIs...', 'info');
+    console.log('Refreshing live data from APIs...');
     fetchCities();
   };
 
   const handleYearChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedYear(parseInt(event.target.value));
-  };
-
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue);
   };
 
   const getMetricIcon = (metric: string) => {

@@ -28,6 +28,24 @@ import {
   useTheme
 } from '@mui/material';
 import axios from 'axios';
+import {
+  AttachMoney,
+  People,
+  HealthAndSafety,
+  School,
+  Speed,
+  TrendingUp,
+  TrendingDown,
+  CheckCircle
+} from '@mui/icons-material';
+import {
+  ResponsiveContainer,
+  BarChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Bar
+} from 'recharts';
 
 interface City {
   _id: string;

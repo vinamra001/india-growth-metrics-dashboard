@@ -102,27 +102,12 @@ interface Trend {
   confidence?: number;
 }
 
-interface AnalysisResult {
-  anomalies: Anomaly[];
-  correlations: Correlation[];
-}
-
 const DEFAULT_METRICS = ['gdpPerCapita', 'population', 'unemploymentRate', 'lifeExpectancy', 'educationIndex', 'healthIndex'];
-
-const METRIC_LABELS: Record<typeof DEFAULT_METRICS[number], string> = {
-  gdpPerCapita: 'GDP Per Capita',
-  population: 'Population',
-  unemploymentRate: 'Unemployment Rate',
-  lifeExpectancy: 'Life Expectancy',
-  educationIndex: 'Education Index',
-  healthIndex: 'Health Index'
-};
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#8dd1e1'];
 
 const AdvancedAnalytics: React.FC = () => {
   const [cities, setCities] = useState<City[]>([]);
-  const [selectedMetrics, setSelectedMetrics] = useState<string[]>(DEFAULT_METRICS);
   const [selectedCity, setSelectedCity] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
@@ -132,12 +117,6 @@ const AdvancedAnalytics: React.FC = () => {
   const [trends, setTrends] = useState<Trend[]>([]);
   const [openScenarioDialog, setOpenScenarioDialog] = useState<boolean>(false);
   const [scenarios, setScenarios] = useState<any[]>([]);
-  const [scenarioInputs, setScenarioInputs] = useState({
-    investmentIncrease: 10,
-    educationInitiatives: 5,
-    healthcareImprovement: 15,
-    environmentalMeasures: 8
-  });
   const [uploading, setUploading] = useState(false);
   const [uploadResult, setUploadResult] = useState<any>(null);
   const [uploadError, setUploadError] = useState<string>('');
@@ -158,7 +137,7 @@ const AdvancedAnalytics: React.FC = () => {
   };
 
   const analyzeData = async () => {
-    if (selectedMetrics.length < 2) {
+    if (DEFAULT_METRICS.length < 2) {
       setError('Please select at least 2 metrics for analysis');
       return;
     }
@@ -170,29 +149,29 @@ const AdvancedAnalytics: React.FC = () => {
       // Fetch anomalies
       const anomaliesResponse = await axios.post('http://localhost:5000/api/ai/anomaly-detection', {
         cities: cities.map(c => c._id),
-        metric: selectedMetrics[0]
+        metric: DEFAULT_METRICS[0]
       });
       setAnomalies(anomaliesResponse.data.anomalies || []);
 
       // Fetch correlations
       const correlationResponse = await axios.post('http://localhost:5000/api/ai/correlation-analysis', {
         cities: cities.map(c => c._id),
-        metric1: selectedMetrics[0],
-        metric2: selectedMetrics[1]
+        metric1: DEFAULT_METRICS[0],
+        metric2: DEFAULT_METRICS[1]
       });
       setCorrelations(correlationResponse.data.correlations || []);
 
       // Fetch clustering
       const clusteringResponse = await axios.post('http://localhost:5000/api/clustering/cities', {
         k: 4,
-        metrics: selectedMetrics
+        metrics: DEFAULT_METRICS
       });
       setClusters(clusteringResponse.data.clusters || []);
 
       // Fetch trends
       const trendsResponse = await axios.post('http://localhost:5000/api/ai/trend-analysis', {
         cities: cities.map(c => c._id),
-        metric: selectedMetrics[0],
+        metric: DEFAULT_METRICS[0],
         years: 5
       });
       setTrends(trendsResponse.data.trends || []);
@@ -219,28 +198,28 @@ const AdvancedAnalytics: React.FC = () => {
           {
             name: 'Investment Boost',
             description: 'Increase investment in key sectors',
-            investmentIncrease: scenarioInputs.investmentIncrease,
+            investmentIncrease: 10,
             timeline: '3 years',
             cost: 'High'
           },
           {
             name: 'Education Focus',
             description: 'Prioritize education and skill development',
-            educationInitiatives: scenarioInputs.educationInitiatives,
+            educationInitiatives: 5,
             timeline: '5 years',
             cost: 'Medium'
           },
           {
             name: 'Healthcare Enhancement',
             description: 'Improve healthcare infrastructure and accessibility',
-            healthcareImprovement: scenarioInputs.healthcareImprovement,
+            healthcareImprovement: 15,
             timeline: '4 years',
             cost: 'High'
           },
           {
             name: 'Environmental Protection',
             description: 'Implement environmental protection measures',
-            environmentalMeasures: scenarioInputs.environmentalMeasures,
+            environmentalMeasures: 8,
             timeline: '3 years',
             cost: 'Medium'
           }
@@ -418,7 +397,7 @@ const AdvancedAnalytics: React.FC = () => {
             <Card>
               <CardHeader
                 title="City Clustering Analysis"
-                subheader={`${clusters.length} clusters based on ${selectedMetrics.join(', ')}`}
+                subheader={`${clusters.length} clusters based on ${DEFAULT_METRICS.join(', ')}`}
               />
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -473,7 +452,7 @@ const AdvancedAnalytics: React.FC = () => {
             <Card>
               <CardHeader
                 title="Trend Analysis"
-                subheader={`${selectedMetrics[0]} trends across cities`}
+                subheader={`${DEFAULT_METRICS[0]} trends across cities`}
               />
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -508,7 +487,7 @@ const AdvancedAnalytics: React.FC = () => {
             <Card>
               <CardHeader
                 title="Anomaly Detection"
-                subheader={`Detected ${anomalies.length} anomalies in ${selectedMetrics[0]}`}
+                subheader={`Detected ${anomalies.length} anomalies in ${DEFAULT_METRICS[0]}`}
               />
               <CardContent>
                 <List>
@@ -537,7 +516,7 @@ const AdvancedAnalytics: React.FC = () => {
             <Card>
               <CardHeader
                 title="Correlation Analysis"
-                subheader={`${selectedMetrics[0]} vs ${selectedMetrics[1]}`}
+                subheader={`${DEFAULT_METRICS[0]} vs ${DEFAULT_METRICS[1]}`}
               />
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
