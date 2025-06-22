@@ -11,14 +11,21 @@ const policyRoutes = require('./routes/policy');
 const clusteringRoutes = require('./routes/clustering');
 const aiRoutes = require('./routes/ai');
 const { securityMiddleware } = require('./middleware/security');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
+
+// Create a rate limiter instance (same as in security.js)
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests per windowMs
+});
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
-app.use(securityMiddleware);
+app.use(securityMiddleware.filter(mw => mw.name !== 'rateLimit'));
 
 // Connect to MongoDB (optional - will use live API data only)
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/india-growth-metrics';
@@ -42,7 +49,7 @@ app.use('/api/policy', policyRoutes);
 app.use('/api/clustering', clusteringRoutes);
 app.use('/api/ai', aiRoutes);
 
-// Health check endpoint
+// Health check endpoint (no rate limit)
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'healthy',
@@ -50,6 +57,12 @@ app.get('/api/health', (req, res) => {
     timestamp: new Date().toISOString(),
     dataSource: 'External APIs (World Bank, WHO, IMF)'
   });
+});
+
+// Apply rate limiter only to API routes (except /api/health)
+app.use('/api', (req, res, next) => {
+  if (req.path === '/health') return next();
+  return limiter(req, res, next);
 });
 
 // Root endpoint
