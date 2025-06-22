@@ -19,19 +19,10 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
-  useMediaQuery,
-  useTheme
+  Paper
 } from '@mui/material';
 import axios from 'axios';
 import {
-  AttachMoney,
-  People,
-  HealthAndSafety,
-  School,
-  Speed,
-  TrendingUp,
-  TrendingDown,
   CheckCircle
 } from '@mui/icons-material';
 import {
@@ -82,10 +73,7 @@ const CityComparison: React.FC = () => {
   const [cities, setCities] = useState<City[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedMetrics, setSelectedMetrics] = useState<string[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
   const [selectedCities, setSelectedCities] = useState<string[]>([]);
-  const theme = useTheme();
 
   useEffect(() => {
     fetchCities();
@@ -108,32 +96,6 @@ const CityComparison: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const getComparisonColor = (value1: any, value2: any, key: string): 'success' | 'error' | 'default' => {
-    if (value1 > value2) return 'success';
-    if (value1 < value2) return 'error';
-    return 'default';
-  };
-
-  const getComparisonIcon = (city1Value: number, city2Value: number) => {
-    if (city1Value > city2Value) return <TrendingUp color="success" />;
-    if (city1Value < city2Value) return <TrendingDown color="error" />;
-    return <CheckCircle color="inherit" />;
-  };
-
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-  };
-
-  const handleCitySelect = (cityName: string) => {
-    if (!selectedCities.includes(cityName) && selectedCities.length < 4) {
-      setSelectedCities([...selectedCities, cityName]);
-    }
-  };
-
-  const handleRemoveCity = (cityName: string) => {
-    setSelectedCities(selectedCities.filter(name => name !== cityName));
   };
 
   const selectedCityData = cities.filter(city => selectedCities.includes(city.name));
@@ -182,8 +144,6 @@ const CityComparison: React.FC = () => {
               <TextField
                 fullWidth
                 label="Search Cities"
-                value={searchTerm}
-                onChange={handleSearch}
                 variant="outlined"
               />
             </Box>
@@ -192,7 +152,6 @@ const CityComparison: React.FC = () => {
                 <InputLabel>Add City</InputLabel>
                 <Select
                   value=""
-                  onChange={(e) => handleCitySelect(e.target.value)}
                   label="Add City"
                 >
                   {cities
@@ -217,7 +176,6 @@ const CityComparison: React.FC = () => {
                 <Chip
                   key={cityName}
                   label={cityName}
-                  onDelete={() => handleRemoveCity(cityName)}
                   color="primary"
                   variant="outlined"
                 />

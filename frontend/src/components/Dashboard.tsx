@@ -23,7 +23,6 @@ import {
   Cell
 } from 'recharts';
 import axios from 'axios';
-import { useMediaQuery, useTheme } from '@mui/material';
 import LiveDataStatus from './LiveDataStatus';
 import CityMap from './CityMap';
 import config from '../config';
@@ -81,7 +80,6 @@ const Dashboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [granularity, setGranularity] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
   const [mapMetric, setMapMetric] = useState<string>('gdpPerCapita');
-  const theme = useTheme();
 
   const fetchCities = async () => {
     try {
