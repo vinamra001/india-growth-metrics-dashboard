@@ -15,11 +15,7 @@ import {
   Bar,
   CartesianGrid,
   XAxis,
-  YAxis,
-  Tooltip as RechartsTooltip,
-  PieChart,
-  Pie,
-  Cell
+  YAxis
 } from 'recharts';
 
 interface City {
