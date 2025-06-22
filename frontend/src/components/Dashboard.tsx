@@ -82,7 +82,6 @@ const Dashboard: React.FC = () => {
   const [granularity, setGranularity] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
   const [mapMetric, setMapMetric] = useState<string>('gdpPerCapita');
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const fetchCities = async () => {
     try {

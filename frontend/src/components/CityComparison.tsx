@@ -85,10 +85,7 @@ const CityComparison: React.FC = () => {
   const [selectedMetrics, setSelectedMetrics] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCities, setSelectedCities] = useState<string[]>([]);
-  const [tabValue, setTabValue] = useState(0);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     fetchCities();
@@ -113,36 +110,6 @@ const CityComparison: React.FC = () => {
     }
   };
 
-  const getMetricIcon = (metric: string) => {
-    switch (metric) {
-      case 'gdp':
-      case 'gdpPerCapita':
-        return <AttachMoney color="primary" />;
-      case 'hdi':
-        return <People color="success" />;
-      case 'healthcareExpenditure':
-        return <HealthAndSafety color="info" />;
-      case 'literacyRate':
-        return <School color="secondary" />;
-      case 'renewableEnergy':
-        return <Speed color="success" />;
-      case 'internetPenetration':
-        return <Speed color="primary" />;
-      default:
-        return <TrendingUp color="primary" />;
-    }
-  };
-
-  const formatMetricValue = (value: number, metric: string) => {
-    if (metric.includes('Rate') || metric.includes('Index')) {
-      return `${(value * 100).toFixed(1)}%`;
-    }
-    if (metric.includes('gdp') || metric.includes('expenditure')) {
-      return `₹${(value / 1000).toFixed(1)}K`;
-    }
-    return value.toFixed(1);
-  };
-
   const getComparisonColor = (value1: any, value2: any, key: string): 'success' | 'error' | 'default' => {
     if (value1 > value2) return 'success';
     if (value1 < value2) return 'error';
@@ -153,18 +120,6 @@ const CityComparison: React.FC = () => {
     if (city1Value > city2Value) return <TrendingUp color="success" />;
     if (city1Value < city2Value) return <TrendingDown color="error" />;
     return <CheckCircle color="inherit" />;
-  };
-
-  const handleMetricSelect = (metric: string) => {
-    if (selectedMetrics.includes(metric)) {
-      setSelectedMetrics(selectedMetrics.filter(m => m !== metric));
-    } else {
-      setSelectedMetrics([...selectedMetrics, metric]);
-    }
-  };
-
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue);
   };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -180,11 +135,6 @@ const CityComparison: React.FC = () => {
   const handleRemoveCity = (cityName: string) => {
     setSelectedCities(selectedCities.filter(name => name !== cityName));
   };
-
-  const filteredCities = cities.filter(city =>
-    city.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    city.state.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   const selectedCityData = cities.filter(city => selectedCities.includes(city.name));
 
