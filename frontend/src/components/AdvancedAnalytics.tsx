@@ -127,12 +127,17 @@ const AdvancedAnalytics: React.FC = () => {
 
   const fetchCities = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/cities');
-      setCities(response.data);
+      setLoading(true);
+      const response = await axios.get(`${config.API_URL}/api/cities`);
+      const citiesData = response.data.data || response.data || [];
+      setCities(Array.isArray(citiesData) ? citiesData : []);
+      setError('');
     } catch (error) {
       console.error('Error fetching cities:', error);
       setError('Failed to fetch cities data');
       setCities([]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -147,14 +152,14 @@ const AdvancedAnalytics: React.FC = () => {
 
     try {
       // Fetch anomalies
-      const anomaliesResponse = await axios.post('http://localhost:5000/api/ai/anomaly-detection', {
+      const anomaliesResponse = await axios.post(`${config.API_URL}/api/ai/anomaly-detection`, {
         cities: cities.map(c => c._id),
         metric: DEFAULT_METRICS[0]
       });
       setAnomalies(anomaliesResponse.data.anomalies || []);
 
       // Fetch correlations
-      const correlationResponse = await axios.post('http://localhost:5000/api/ai/correlation-analysis', {
+      const correlationResponse = await axios.post(`${config.API_URL}/api/ai/correlation-analysis`, {
         cities: cities.map(c => c._id),
         metric1: DEFAULT_METRICS[0],
         metric2: DEFAULT_METRICS[1]
@@ -162,14 +167,14 @@ const AdvancedAnalytics: React.FC = () => {
       setCorrelations(correlationResponse.data.correlations || []);
 
       // Fetch clustering
-      const clusteringResponse = await axios.post('http://localhost:5000/api/clustering/cities', {
+      const clusteringResponse = await axios.post(`${config.API_URL}/api/clustering/cities`, {
         k: 4,
         metrics: DEFAULT_METRICS
       });
       setClusters(clusteringResponse.data.clusters || []);
 
       // Fetch trends
-      const trendsResponse = await axios.post('http://localhost:5000/api/ai/trend-analysis', {
+      const trendsResponse = await axios.post(`${config.API_URL}/api/ai/trend-analysis`, {
         cities: cities.map(c => c._id),
         metric: DEFAULT_METRICS[0],
         years: 5
@@ -192,7 +197,7 @@ const AdvancedAnalytics: React.FC = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:5000/api/clustering/scenario-analysis', {
+      const response = await axios.post(`${config.API_URL}/api/clustering/scenario-analysis`, {
         cityId: selectedCity,
         scenarios: [
           {
@@ -314,7 +319,14 @@ const AdvancedAnalytics: React.FC = () => {
                   value={selectedCity}
                   onChange={(e) => setSelectedCity(e.target.value)}
                   label="Select City"
+                  disabled={loading}
                 >
+                  {cities.length === 0 && !loading && (
+                    <MenuItem disabled>No cities available</MenuItem>
+                  )}
+                  {loading && (
+                    <MenuItem disabled>Loading cities...</MenuItem>
+                  )}
                   {cities.map((city) => (
                     <MenuItem key={city._id} value={city._id}>
                       {city.name}
