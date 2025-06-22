@@ -99,15 +99,6 @@ npm start
 
 ---
 
-## 🏅 Prizes & Recognition
-
-- **1st Place:** Winner Certificate + Goodies
-- **2nd Place:** Runnerup Certificate + Goodies
-- **3rd Place:** Runnerup Certificate + Goodies
-- **For Everybody:** Participants Certificate
-
----
-
 ## 🎉 Let's Build Something Amazing!
 
 Ready to decode development and create insights that could impact how we understand progress?  
