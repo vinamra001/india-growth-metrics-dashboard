@@ -99,14 +99,12 @@ const Dashboard: React.FC = () => {
   };
 
   // Auto-refresh live data every 5 minutes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchCities();
-    
     const interval = setInterval(() => {
-      // console.log('Auto-refreshing live data...');
       fetchCities();
-    }, 5 * 60 * 1000); // 5 minutes
-    
+    }, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, [granularity]);
 
