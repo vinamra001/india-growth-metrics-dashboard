@@ -254,5 +254,3 @@ Ready to decode development and create insights that could impact how we underst
 **Fork this repo and start building!** 🚀
 
 ---
-
-*Built with ❤️ for the Let's Code Community Challenge*
