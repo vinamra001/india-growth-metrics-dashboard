@@ -222,7 +222,7 @@ npm test
 
 ## 📞 Contact & Support
 - **Email:** vinamravishwakarma2004@gmail.com
-- **GitHub:** vinamra001
+- **GitHub:** https://github.com/vinamra001
 - **LinkedIn:** www.linkedin.com/in/vinamrakumar-vishwakarma
 
 ## 📄 License
