@@ -8,10 +8,10 @@
 ## 📸 Screenshots
 ![Dashboard Overview](./demo-images/dashboard-overview.png)
 ![Cities Comparison](./demo-images/cities-comparison.png)
-![Mobile View](./demo-images/mobile-view.png)
+![Mobile View](./demo-images/mobile-view.jpeg)
 ![Rankings](./demo-images/rankings-page.png)
 ![AI Insights](./demo-images/ai-insights.png)
-![Live Data Status](./demo-images/live-data-status.jpeg)
+![Live Data Status](./demo-images/live-data-status.png)
 ![Interactive Map](./demo-images/map-view.png)
 ![Advanced Analytics](./demo-images/advanced-analytics.png)
 
