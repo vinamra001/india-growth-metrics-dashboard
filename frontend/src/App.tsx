@@ -113,9 +113,7 @@ function TabPanel(props: TabPanelProps) {
 function App() {
   const [value, setValue] = useState<number>(0);
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
-  const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
-  const showTabs = isMobile || isSmallScreen;
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
     // Initialize data and perform any necessary setup
@@ -193,7 +191,7 @@ function App() {
           color: 'white'
         }}>
           <Toolbar>
-            {showTabs && (
+            {isMobile && (
               <IconButton
                 color="inherit"
                 aria-label="open drawer"
@@ -212,7 +210,7 @@ function App() {
         </AppBar>
 
         <Box sx={{ display: 'flex', flex: 1 }}>
-          {!showTabs && (
+          {!isMobile && (
             <Drawer
               variant="permanent"
               sx={{
@@ -229,7 +227,7 @@ function App() {
             </Drawer>
           )}
 
-          {showTabs && (
+          {isMobile && (
             <Drawer
               variant="temporary"
               open={mobileOpen}
@@ -258,23 +256,14 @@ function App() {
               flexDirection: 'column'
             }}
           >
-            {showTabs && (
+            {isMobile && (
               <Paper sx={{ mb: 2, overflow: 'hidden' }}>
                 <Tabs
                   value={value}
                   onChange={handleChange}
                   variant="scrollable"
                   scrollButtons="auto"
-                  allowScrollButtonsMobile
-                  sx={{ 
-                    borderBottom: 1, 
-                    borderColor: 'divider',
-                    '& .MuiTab-root': {
-                      minHeight: 48,
-                      fontSize: '0.75rem',
-                      padding: '6px 8px'
-                    }
-                  }}
+                  sx={{ borderBottom: 1, borderColor: 'divider' }}
                 >
                   {menuItems.map((item, index) => (
                     <Tab
@@ -282,11 +271,7 @@ function App() {
                       label={item.label}
                       icon={item.icon}
                       iconPosition="start"
-                      sx={{ 
-                        minHeight: 48,
-                        fontSize: '0.75rem',
-                        padding: '6px 8px'
-                      }}
+                      sx={{ minHeight: 64 }}
                     />
                   ))}
                 </Tabs>
